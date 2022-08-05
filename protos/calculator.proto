@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option go_package = "github.com/bhb603/grpc-demo/golang/pb";
+
+package grpc.demo;
+
+service Calculator {
+  rpc NthFibonacci(FibonacciParams) returns (NthFibonacciResponse) {}
+  rpc Substrings(SubstringsParams) returns (SubstringsResponse) {}
+}
+
+message FibonacciParams {
+  int32 n = 1;
+}
+
+message NthFibonacciResponse {
+  int32 result = 1;
+}
+
+message SubstringsParams {
+  string str = 1;
+}
+
+message SubstringsResponse {
+  repeated string substrings = 1;
+}

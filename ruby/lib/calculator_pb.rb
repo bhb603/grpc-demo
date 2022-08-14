@@ -11,11 +11,11 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
     add_message "grpc.demo.NthFibonacciResponse" do
       optional :result, :int32, 1
     end
-    add_message "grpc.demo.SubstringsParams" do
-      optional :str, :string, 1
+    add_message "grpc.demo.SumParams" do
+      repeated :numbers, :int32, 1
     end
-    add_message "grpc.demo.SubstringsResponse" do
-      repeated :substrings, :string, 1
+    add_message "grpc.demo.SumResponse" do
+      optional :sum, :int32, 1
     end
   end
 end
@@ -24,7 +24,7 @@ module Grpc
   module Demo
     FibonacciParams = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("grpc.demo.FibonacciParams").msgclass
     NthFibonacciResponse = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("grpc.demo.NthFibonacciResponse").msgclass
-    SubstringsParams = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("grpc.demo.SubstringsParams").msgclass
-    SubstringsResponse = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("grpc.demo.SubstringsResponse").msgclass
+    SumParams = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("grpc.demo.SumParams").msgclass
+    SumResponse = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("grpc.demo.SumResponse").msgclass
   end
 end

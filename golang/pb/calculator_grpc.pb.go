@@ -19,7 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CalculatorClient interface {
 	NthFibonacci(ctx context.Context, in *FibonacciParams, opts ...grpc.CallOption) (*NthFibonacciResponse, error)
-	Substrings(ctx context.Context, in *SubstringsParams, opts ...grpc.CallOption) (*SubstringsResponse, error)
+	Sum(ctx context.Context, in *SumParams, opts ...grpc.CallOption) (*SumResponse, error)
 }
 
 type calculatorClient struct {
@@ -39,9 +39,9 @@ func (c *calculatorClient) NthFibonacci(ctx context.Context, in *FibonacciParams
 	return out, nil
 }
 
-func (c *calculatorClient) Substrings(ctx context.Context, in *SubstringsParams, opts ...grpc.CallOption) (*SubstringsResponse, error) {
-	out := new(SubstringsResponse)
-	err := c.cc.Invoke(ctx, "/grpc.demo.Calculator/Substrings", in, out, opts...)
+func (c *calculatorClient) Sum(ctx context.Context, in *SumParams, opts ...grpc.CallOption) (*SumResponse, error) {
+	out := new(SumResponse)
+	err := c.cc.Invoke(ctx, "/grpc.demo.Calculator/Sum", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (c *calculatorClient) Substrings(ctx context.Context, in *SubstringsParams,
 // for forward compatibility
 type CalculatorServer interface {
 	NthFibonacci(context.Context, *FibonacciParams) (*NthFibonacciResponse, error)
-	Substrings(context.Context, *SubstringsParams) (*SubstringsResponse, error)
+	Sum(context.Context, *SumParams) (*SumResponse, error)
 	mustEmbedUnimplementedCalculatorServer()
 }
 
@@ -64,8 +64,8 @@ type UnimplementedCalculatorServer struct {
 func (UnimplementedCalculatorServer) NthFibonacci(context.Context, *FibonacciParams) (*NthFibonacciResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NthFibonacci not implemented")
 }
-func (UnimplementedCalculatorServer) Substrings(context.Context, *SubstringsParams) (*SubstringsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Substrings not implemented")
+func (UnimplementedCalculatorServer) Sum(context.Context, *SumParams) (*SumResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Sum not implemented")
 }
 func (UnimplementedCalculatorServer) mustEmbedUnimplementedCalculatorServer() {}
 
@@ -98,20 +98,20 @@ func _Calculator_NthFibonacci_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Calculator_Substrings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SubstringsParams)
+func _Calculator_Sum_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SumParams)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CalculatorServer).Substrings(ctx, in)
+		return srv.(CalculatorServer).Sum(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/grpc.demo.Calculator/Substrings",
+		FullMethod: "/grpc.demo.Calculator/Sum",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CalculatorServer).Substrings(ctx, req.(*SubstringsParams))
+		return srv.(CalculatorServer).Sum(ctx, req.(*SumParams))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -128,8 +128,8 @@ var Calculator_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Calculator_NthFibonacci_Handler,
 		},
 		{
-			MethodName: "Substrings",
-			Handler:    _Calculator_Substrings_Handler,
+			MethodName: "Sum",
+			Handler:    _Calculator_Sum_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

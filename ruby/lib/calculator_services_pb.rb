@@ -16,7 +16,7 @@ module Grpc
         self.service_name = 'grpc.demo.Calculator'
 
         rpc :NthFibonacci, ::Grpc::Demo::FibonacciParams, ::Grpc::Demo::NthFibonacciResponse
-        rpc :Substrings, ::Grpc::Demo::SubstringsParams, ::Grpc::Demo::SubstringsResponse
+        rpc :Sum, ::Grpc::Demo::SumParams, ::Grpc::Demo::SumResponse
       end
 
       Stub = Service.rpc_stub_class

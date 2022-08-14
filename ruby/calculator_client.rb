@@ -16,10 +16,9 @@ def main
     puts "#{n}th fib=#{fib.result}"
   end
 
-  str = "demo"
-  resp = stub.substrings(Grpc::Demo::SubstringsParams.new(str: str))
-  puts "Substrings of '#{str}':"
-  resp.substrings.each { |s| puts "\t#{s}" }
+  numbers = [6, 0, 3, 9]
+  resp = stub.sum(Grpc::Demo::SumParams.new(numbers: numbers))
+  puts "sum of '#{numbers}'=#{resp.sum}"
 end
 
 

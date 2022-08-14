@@ -18,10 +18,11 @@ It's a very useful tool for interacting with gRPC servers.
     ```
 - Describe a service or message, e.g.:
     ```
-    grpcurl --plaintext localhost:50051 describe grpc.demo.Calculator/NthFibonacci
-    grpcurl --plaintext localhost:50051 describe grpc.demo.Calculator/FibonacciParams
+    grpcurl --plaintext localhost:50051 describe grpc.demo.Calculator.NthFibonacci
+    grpcurl --plaintext localhost:50051 describe grpc.demo.FibonacciParams
     ```
 - Invoke an RPC, e.g.:
     ```
-    grpcurl --plaintext -d '{"n": 4}' localhost:50051 grpc.demo.Calculator/NthFibonacci
+    grpcurl --plaintext -d '{"n": 4}' localhost:50051 grpc.demo.Calculator.NthFibonacci
+    grpcurl --plaintext -d '{"numbers": [6,0,3,9]}' localhost:50051 grpc.demo.Calculator.Sum
     ```

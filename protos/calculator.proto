@@ -6,7 +6,7 @@ package grpc.demo;
 
 service Calculator {
   rpc NthFibonacci(FibonacciParams) returns (NthFibonacciResponse) {}
-  rpc Substrings(SubstringsParams) returns (SubstringsResponse) {}
+  rpc Sum(SumParams) returns (SumResponse) {}
 }
 
 message FibonacciParams {
@@ -17,10 +17,10 @@ message NthFibonacciResponse {
   int32 result = 1;
 }
 
-message SubstringsParams {
-  string str = 1;
+message SumParams {
+  repeated int32 numbers = 1;
 }
 
-message SubstringsResponse {
-  repeated string substrings = 1;
+message SumResponse {
+  int32 sum = 1;
 }

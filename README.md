@@ -33,3 +33,11 @@ It's a very useful tool for interacting with gRPC servers.
     ```
     grpcurl --plaintext -d '{"min": 10, "max": 20, "count": 1000}' localhost:50051 grpc.demo.Calculator.RandomStream
     ```
+- Add metadata, e.g. auth header:
+    ```
+    grpcurl --plaintext \
+      -d '{"numbers": [6,0,3,9]}' \
+      -rpc-header "x-api-key: secret" \
+      -reflect-header "x-api-key: secret" \
+      localhost:50051 grpc.demo.Calculator.Sum
+    ```

@@ -3,6 +3,8 @@ package calculator
 import (
 	"context"
 	"log"
+	"math/rand"
+	"time"
 
 	"github.com/bhb603/grpc-demo/golang/pb"
 	"google.golang.org/grpc/codes"
@@ -16,7 +18,7 @@ type Calculator struct {
 
 // NthFibonacci implements calculator.NthFibonacci
 func (c *Calculator) NthFibonacci(ctx context.Context, params *pb.FibonacciParams) (*pb.NthFibonacciResponse, error) {
-	var result int32
+	var value int32
 
 	n := params.GetN()
 	log.Printf("Received: request for %dth fibonacci", n)
@@ -30,18 +32,18 @@ func (c *Calculator) NthFibonacci(ctx context.Context, params *pb.FibonacciParam
 	}
 
 	if n <= int32(1) {
-		result = n
-		return &pb.NthFibonacciResponse{Result: result}, nil
+		value = n
+		return &pb.NthFibonacciResponse{Value: value}, nil
 	}
 
 	var a, b int32 = 0, 1
 	for i := 2; i <= int(n); i++ {
-		result = a + b
+		value = a + b
 		a = b
-		b = result
+		b = value
 	}
 
-	return &pb.NthFibonacciResponse{Result: result}, nil
+	return &pb.NthFibonacciResponse{Value: value}, nil
 }
 
 // Sum implements calculator.Sum
@@ -54,4 +56,24 @@ func (c *Calculator) Sum(ctx context.Context, params *pb.SumParams) (*pb.SumResp
 	}
 
 	return &pb.SumResponse{Sum: sum}, nil
+}
+
+func (c *Calculator) RandomStream(params *pb.RandomStreamParams, stream pb.Calculator_RandomStreamServer) error {
+	min, max, count := params.GetMin(), params.GetMax(), params.GetCount()
+	log.Printf("Received random stream request %d numbers in [%d, %d)", count, min, max)
+	if min >= max {
+		return status.Errorf(codes.InvalidArgument, "min must be < max")
+	}
+	for i := int32(0); i < count; i++ {
+		n := rand.Int31n(max-min) + min
+		if err := stream.Send(&pb.RandomNumber{Value: n}); err != nil {
+			log.Printf("done streaming: %v", err)
+			return err
+		}
+		time.Sleep(500 * time.Millisecond)
+	}
+
+	log.Printf("done streaming")
+
+	return nil
 }

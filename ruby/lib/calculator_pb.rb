@@ -9,13 +9,21 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
       optional :n, :int32, 1
     end
     add_message "grpc.demo.NthFibonacciResponse" do
-      optional :result, :int32, 1
+      optional :value, :int32, 1
     end
     add_message "grpc.demo.SumParams" do
       repeated :numbers, :int32, 1
     end
     add_message "grpc.demo.SumResponse" do
       optional :sum, :int32, 1
+    end
+    add_message "grpc.demo.RandomStreamParams" do
+      optional :min, :int32, 1
+      optional :max, :int32, 2
+      optional :count, :int32, 3
+    end
+    add_message "grpc.demo.RandomNumber" do
+      optional :value, :int32, 1
     end
   end
 end
@@ -26,5 +34,7 @@ module Grpc
     NthFibonacciResponse = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("grpc.demo.NthFibonacciResponse").msgclass
     SumParams = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("grpc.demo.SumParams").msgclass
     SumResponse = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("grpc.demo.SumResponse").msgclass
+    RandomStreamParams = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("grpc.demo.RandomStreamParams").msgclass
+    RandomNumber = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("grpc.demo.RandomNumber").msgclass
   end
 end

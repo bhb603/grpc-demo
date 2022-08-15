@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type CalculatorClient interface {
 	NthFibonacci(ctx context.Context, in *FibonacciParams, opts ...grpc.CallOption) (*NthFibonacciResponse, error)
 	Sum(ctx context.Context, in *SumParams, opts ...grpc.CallOption) (*SumResponse, error)
+	RandomStream(ctx context.Context, in *RandomStreamParams, opts ...grpc.CallOption) (Calculator_RandomStreamClient, error)
 }
 
 type calculatorClient struct {
@@ -48,12 +49,45 @@ func (c *calculatorClient) Sum(ctx context.Context, in *SumParams, opts ...grpc.
 	return out, nil
 }
 
+func (c *calculatorClient) RandomStream(ctx context.Context, in *RandomStreamParams, opts ...grpc.CallOption) (Calculator_RandomStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Calculator_ServiceDesc.Streams[0], "/grpc.demo.Calculator/RandomStream", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &calculatorRandomStreamClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Calculator_RandomStreamClient interface {
+	Recv() (*RandomNumber, error)
+	grpc.ClientStream
+}
+
+type calculatorRandomStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *calculatorRandomStreamClient) Recv() (*RandomNumber, error) {
+	m := new(RandomNumber)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // CalculatorServer is the server API for Calculator service.
 // All implementations must embed UnimplementedCalculatorServer
 // for forward compatibility
 type CalculatorServer interface {
 	NthFibonacci(context.Context, *FibonacciParams) (*NthFibonacciResponse, error)
 	Sum(context.Context, *SumParams) (*SumResponse, error)
+	RandomStream(*RandomStreamParams, Calculator_RandomStreamServer) error
 	mustEmbedUnimplementedCalculatorServer()
 }
 
@@ -66,6 +100,9 @@ func (UnimplementedCalculatorServer) NthFibonacci(context.Context, *FibonacciPar
 }
 func (UnimplementedCalculatorServer) Sum(context.Context, *SumParams) (*SumResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Sum not implemented")
+}
+func (UnimplementedCalculatorServer) RandomStream(*RandomStreamParams, Calculator_RandomStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method RandomStream not implemented")
 }
 func (UnimplementedCalculatorServer) mustEmbedUnimplementedCalculatorServer() {}
 
@@ -116,6 +153,27 @@ func _Calculator_Sum_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Calculator_RandomStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(RandomStreamParams)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(CalculatorServer).RandomStream(m, &calculatorRandomStreamServer{stream})
+}
+
+type Calculator_RandomStreamServer interface {
+	Send(*RandomNumber) error
+	grpc.ServerStream
+}
+
+type calculatorRandomStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *calculatorRandomStreamServer) Send(m *RandomNumber) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // Calculator_ServiceDesc is the grpc.ServiceDesc for Calculator service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -132,6 +190,12 @@ var Calculator_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Calculator_Sum_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "RandomStream",
+			Handler:       _Calculator_RandomStream_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "calculator.proto",
 }

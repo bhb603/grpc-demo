@@ -17,6 +17,7 @@ module Grpc
 
         rpc :NthFibonacci, ::Grpc::Demo::FibonacciParams, ::Grpc::Demo::NthFibonacciResponse
         rpc :Sum, ::Grpc::Demo::SumParams, ::Grpc::Demo::SumResponse
+        rpc :RandomStream, ::Grpc::Demo::RandomStreamParams, stream(::Grpc::Demo::RandomNumber)
       end
 
       Stub = Service.rpc_stub_class

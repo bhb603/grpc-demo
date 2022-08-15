@@ -13,12 +13,18 @@ def main
 
   (0..10).each do |n|
     fib = stub.nth_fibonacci(Grpc::Demo::FibonacciParams.new(n: n))
-    puts "#{n}th fib=#{fib.result}"
+    puts "#{n}th fib=#{fib.value}"
   end
 
   numbers = [6, 0, 3, 9]
   resp = stub.sum(Grpc::Demo::SumParams.new(numbers: numbers))
   puts "sum of '#{numbers}'=#{resp.sum}"
+
+  random_stream_resp = stub.random_stream(Grpc::Demo::RandomStreamParams.new(min: -10, max: 10, count: 10))
+  random_stream_resp.each do |random_num|
+    print random_num.value, " "
+  end
+  puts 'DONE'
 end
 
 

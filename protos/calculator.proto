@@ -7,6 +7,7 @@ package grpc.demo;
 service Calculator {
   rpc NthFibonacci(FibonacciParams) returns (NthFibonacciResponse) {}
   rpc Sum(SumParams) returns (SumResponse) {}
+  rpc RandomStream(RandomStreamParams) returns (stream RandomNumber) {}
 }
 
 message FibonacciParams {
@@ -14,7 +15,7 @@ message FibonacciParams {
 }
 
 message NthFibonacciResponse {
-  int32 result = 1;
+  int32 value = 1;
 }
 
 message SumParams {
@@ -23,4 +24,14 @@ message SumParams {
 
 message SumResponse {
   int32 sum = 1;
+}
+
+message RandomStreamParams {
+  int32 min = 1;
+  int32 max = 2;
+  int32 count = 3;
+}
+
+message RandomNumber {
+  int32 value = 1;
 }

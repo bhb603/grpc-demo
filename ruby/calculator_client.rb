@@ -28,6 +28,18 @@ def main
   puts "Enter to continue"
   STDIN.gets
 
+  puts "\nPrimes:"
+  (0..100).each do |n|
+    is_prime = stub.is_prime(Grpc::Demo::IsPrimeParams.new(value: n))
+    if is_prime.prime
+      print n, " "
+    end
+  end
+  puts
+
+  puts "Enter to continue"
+  STDIN.gets
+
   puts "\nRandom stream:"
   random_stream_resp = stub.random_stream(Grpc::Demo::RandomStreamParams.new(min: -10, max: 10, count: 10))
   random_stream_resp.each do |random_num|

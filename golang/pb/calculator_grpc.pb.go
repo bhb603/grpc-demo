@@ -21,6 +21,7 @@ type CalculatorClient interface {
 	NthFibonacci(ctx context.Context, in *FibonacciParams, opts ...grpc.CallOption) (*NthFibonacciResponse, error)
 	Sum(ctx context.Context, in *SumParams, opts ...grpc.CallOption) (*SumResponse, error)
 	RandomStream(ctx context.Context, in *RandomStreamParams, opts ...grpc.CallOption) (Calculator_RandomStreamClient, error)
+	IsPrime(ctx context.Context, in *IsPrimeParams, opts ...grpc.CallOption) (*IsPrimeResponse, error)
 }
 
 type calculatorClient struct {
@@ -81,6 +82,15 @@ func (x *calculatorRandomStreamClient) Recv() (*RandomNumber, error) {
 	return m, nil
 }
 
+func (c *calculatorClient) IsPrime(ctx context.Context, in *IsPrimeParams, opts ...grpc.CallOption) (*IsPrimeResponse, error) {
+	out := new(IsPrimeResponse)
+	err := c.cc.Invoke(ctx, "/grpc.demo.Calculator/IsPrime", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CalculatorServer is the server API for Calculator service.
 // All implementations must embed UnimplementedCalculatorServer
 // for forward compatibility
@@ -88,6 +98,7 @@ type CalculatorServer interface {
 	NthFibonacci(context.Context, *FibonacciParams) (*NthFibonacciResponse, error)
 	Sum(context.Context, *SumParams) (*SumResponse, error)
 	RandomStream(*RandomStreamParams, Calculator_RandomStreamServer) error
+	IsPrime(context.Context, *IsPrimeParams) (*IsPrimeResponse, error)
 	mustEmbedUnimplementedCalculatorServer()
 }
 
@@ -103,6 +114,9 @@ func (UnimplementedCalculatorServer) Sum(context.Context, *SumParams) (*SumRespo
 }
 func (UnimplementedCalculatorServer) RandomStream(*RandomStreamParams, Calculator_RandomStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method RandomStream not implemented")
+}
+func (UnimplementedCalculatorServer) IsPrime(context.Context, *IsPrimeParams) (*IsPrimeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsPrime not implemented")
 }
 func (UnimplementedCalculatorServer) mustEmbedUnimplementedCalculatorServer() {}
 
@@ -174,6 +188,24 @@ func (x *calculatorRandomStreamServer) Send(m *RandomNumber) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _Calculator_IsPrime_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsPrimeParams)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CalculatorServer).IsPrime(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc.demo.Calculator/IsPrime",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CalculatorServer).IsPrime(ctx, req.(*IsPrimeParams))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Calculator_ServiceDesc is the grpc.ServiceDesc for Calculator service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -188,6 +220,10 @@ var Calculator_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Sum",
 			Handler:    _Calculator_Sum_Handler,
+		},
+		{
+			MethodName: "IsPrime",
+			Handler:    _Calculator_IsPrime_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

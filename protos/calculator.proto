@@ -8,6 +8,7 @@ service Calculator {
   rpc NthFibonacci(FibonacciParams) returns (NthFibonacciResponse) {}
   rpc Sum(SumParams) returns (SumResponse) {}
   rpc RandomStream(RandomStreamParams) returns (stream RandomNumber) {}
+  rpc IsPrime(IsPrimeParams) returns (IsPrimeResponse) {}
 }
 
 message FibonacciParams {
@@ -34,4 +35,12 @@ message RandomStreamParams {
 
 message RandomNumber {
   int32 value = 1;
+}
+
+message IsPrimeParams {
+  int32 value = 1;
+}
+
+message IsPrimeResponse {
+  bool prime = 1;
 }

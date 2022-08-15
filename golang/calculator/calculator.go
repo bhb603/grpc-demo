@@ -77,3 +77,19 @@ func (c *Calculator) RandomStream(params *pb.RandomStreamParams, stream pb.Calcu
 
 	return nil
 }
+func (c *Calculator) IsPrime(ctx context.Context, params *pb.IsPrimeParams) (*pb.IsPrimeResponse, error) {
+	val := params.GetValue()
+	log.Printf("Received IsPrime request for %d", val)
+
+	if val <= int32(1) {
+		return &pb.IsPrimeResponse{Prime: false}, nil
+	}
+
+	for n := int32(2); n*n <= val; n++ {
+		if val%n == 0 {
+			return &pb.IsPrimeResponse{Prime: false}, nil
+		}
+	}
+
+	return &pb.IsPrimeResponse{Prime: true}, nil
+}

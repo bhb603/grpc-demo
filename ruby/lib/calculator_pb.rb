@@ -25,6 +25,12 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
     add_message "grpc.demo.RandomNumber" do
       optional :value, :int32, 1
     end
+    add_message "grpc.demo.IsPrimeParams" do
+      optional :value, :int32, 1
+    end
+    add_message "grpc.demo.IsPrimeResponse" do
+      optional :prime, :bool, 1
+    end
   end
 end
 
@@ -36,5 +42,7 @@ module Grpc
     SumResponse = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("grpc.demo.SumResponse").msgclass
     RandomStreamParams = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("grpc.demo.RandomStreamParams").msgclass
     RandomNumber = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("grpc.demo.RandomNumber").msgclass
+    IsPrimeParams = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("grpc.demo.IsPrimeParams").msgclass
+    IsPrimeResponse = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("grpc.demo.IsPrimeResponse").msgclass
   end
 end
